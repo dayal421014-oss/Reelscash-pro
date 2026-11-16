@@ -1,0 +1,50 @@
+name: Build ReelsCash Pro APK and AAB
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Generate Project
+        run: |
+          flutter create --org com.reelscash --project-name pro --platforms android .
+          mkdir -p android/app/src/main
+          if [ -f "google-services (1).json" ]; then
+            cp "google-services (1).json" android/app/google-services.json
+          elif [ -f "google-services.json" ]; then
+            cp google-services.json android/app/google-services.json
+          fi
+
+      - name: Build APK & AAB
+        run: |
+          flutter pub get
+          flutter build apk --release
+          flutter build appbundle --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ReelsCashPro-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: ReelsCashPro-PlayStore-AAB
+          path: build/app/outputs/bundle/release/app-release.aab
+          
