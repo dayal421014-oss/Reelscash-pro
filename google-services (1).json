@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "77879484030",
+    "project_id": "reelcash-pro",
+    "storage_bucket": "reelcash-pro.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:77879484030:android:9670581b2b345d673e422f",
+        "android_client_info": {
+          "package_name": "com.reelscash.pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB61-TZuSNZbMt5e9PrdNU5MVa-3PRfj0Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
