@@ -1,0 +1,52 @@
+name: Build ReelsCash Pro APK and AAB
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install System Java & Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-17-jdk unzip wget git
+
+      - name: Clone Flutter SDK Stable
+        run: |
+          git clone https://github.com/flutter/flutter.git -b stable --depth 1 ~/flutter
+          echo "$HOME/flutter/bin" >> $GITHUB_PATH
+
+      - name: Initialize Project & Firebase Config
+        run: |
+          flutter create --org com.reelscash --project-name pro --platforms android .
+          mkdir -p android/app/src/main
+          if [ -f "google-services (1).json" ]; then
+            cp "google-services (1).json" android/app/google-services.json
+          elif [ -f "google-services.json" ]; then
+            cp google-services.json android/app/google-services.json
+          fi
+
+      - name: Build APK and AAB Release
+        run: |
+          flutter pub get
+          flutter build apk --release
+          flutter build appbundle --release
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ReelsCashPro-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload Play Store AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: ReelsCashPro-PlayStore-AAB
+          path: build/app/outputs/bundle/release/app-release.aab
+          
